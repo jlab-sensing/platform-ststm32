@@ -118,7 +118,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "symlink://C:/Users/steve/Documents/stm32cubwl"
+      "version": "https://github.com/jlab-sensing/platform-ststm32"
     },
     "framework-cmsis-stm32f3": {
       "type": "framework",
