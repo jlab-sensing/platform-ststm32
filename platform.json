@@ -118,7 +118,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "symlink:///home/felipe/.platformio/packages/STM32CubeWL"
+      "version": "symlink://C:/Users/steve/Documents/stm32cubwl"
     },
     "framework-cmsis-stm32f3": {
       "type": "framework",
