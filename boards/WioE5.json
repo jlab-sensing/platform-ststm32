@@ -13,7 +13,8 @@
     },
     "debug": {
       "default_tools": [
-        "stlink"
+        "stlink",
+        "blackmagic"
       ],
       "jlink_device": "STM32WL55JC",
       "onboard_tools": [
@@ -34,7 +35,8 @@
         "jlink",
         "cmsis-dap",
         "stlink",
-        "mbed"
+        "mbed",
+        "blackmagic"
       ]
     },
     "url": "https://wiki.seeedstudio.com/LoRa-E5_STM32WLE5JC_Module",
