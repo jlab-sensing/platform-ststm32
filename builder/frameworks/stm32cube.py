@@ -306,26 +306,42 @@ if os.path.isdir(os.path.join(bsp_dir, "Adafruit_Shield")):
 # Process Utilities
 #
 
-utils_dir = os.path.join(FRAMEWORK_DIR, "Utilities")
-if os.path.isdir(utils_dir):
-    for util in os.listdir(utils_dir):
-        util_dir = os.path.join(utils_dir, util)
-        # Some of utilities is not meant to be built
-        if not os.path.isdir(util_dir) or not any(
-            f.endswith((".c", ".h")) for f in os.listdir(util_dir)
-        ):
-            continue
-        build_custom_lib(
-            os.path.join(utils_dir, util),
-            {
-                "name": "Util-%s" % util,
-                "dependencies": [{"name": "FrameworkVariantBSP"}],
-                "build": {
-                    "flags": ["-I $PROJECT_SRC_DIR", "-I $PROJECT_INCLUDE_DIR"],
-                    "libLDFMode": "deep",
+def recursive_util_build(parent):
+    """Recursively build utility libraries
+    
+    A utility library is defined as a folder containing at least one .h or .c
+    file. The library is then made available to the build tools.
+    
+    Args
+    ----
+    root: Fullpath of directory to search
+    """
+   
+    # check if root path is a directory 
+    if os.path.isdir(parent):
+        # get all children
+        childs = os.listdir(parent)
+        # build library if .h/.c files exist
+        if any(c.endswith((".c", ".h")) for c in childs):
+            build_custom_lib(
+                parent,
+                {
+                    "name": f"Util-{os.path.basename(parent)}",
+                    "dependencies": [{"name": "FrameworkVariantBSP"}],
+                    "build": {
+                        "flags": ["-I $PROJECT_SRC_DIR", "-I $PROJECT_INCLUDE_DIR"],
+                        "libLDFMode": "deep",
+                    },
                 },
-            },
-        )
+            )
+        # otherwise recuse through files
+        else:
+            for c in childs:
+                c_path = os.path.join(parent, c)
+                recursive_util_build(c_path)
+
+utils_dir = os.path.join(FRAMEWORK_DIR, "Utilities")
+recursive_util_build(utils_dir)
 
 #
 # USB libraries from ST
