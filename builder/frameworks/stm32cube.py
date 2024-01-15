@@ -392,6 +392,31 @@ lorawan_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "Third_Party", "LoRaWAN
 recursive_build_lora(lorawan_dir)
 
 #
+# Build Middleware/Third_Party/SubGHz_Phy
+#
+subghz_phy_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "Third_Party", "SubGHz_Phy")
+stm32_radio_driver_dir = os.path.join(subghz_phy_dir, "stm32_radio_driver")
+# check if path exists
+if os.path.isdir(subghz_phy_dir):
+    build_custom_lib(
+        subghz_phy_dir,
+        {
+            "name": "Middleware-SubGHz_Phy",
+            "build": {
+                "srcFilter": ["+<*.c>", "+<stm32_radio_driver/*.c"],
+                "flags": [
+                    "-I $PROJECT_SRC_DIR",
+                    "-I $PROJECT_INCLUDE_DIR",
+                    f"-I {subghz_phy_dir}",
+                    f"-I {stm32_radio_driver_dir}"
+                    ],
+                "libLDFMode": "deep",
+            },
+        },
+    )
+
+
+#
 # Target: Build HAL Library
 #
 
