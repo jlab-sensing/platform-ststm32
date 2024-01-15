@@ -352,6 +352,48 @@ for usb_lib in ("STM32_USB_Device_Library", "STM32_USB_Host_Library"):
     build_usb_libs(os.path.join(middleware_dir, usb_lib))
 
 #
+# LoRaWAN Middleware
+#
+
+def recursive_build_lora(parent):
+    """Recursively build LoRa Middlewhere
+   
+    Recursively checks each folder for presence of .h/.c to indicate a library.
+    The library is then added to the build tools. 
+    
+    Args
+    ----
+    root: Fullpath of directory to search
+    """
+   
+    # check if root path is a directory 
+    if os.path.isdir(parent):
+        # get all children
+        childs = os.listdir(parent)
+        # build library if .h/.c files exist
+        if any(c.endswith((".c", ".h")) for c in childs):
+            build_custom_lib(
+                parent,
+                {
+                    "name": f"LoRa-{os.path.basename(parent)}",
+                    "build": {
+                        "flags": ["-I $PROJECT_SRC_DIR", "-I $PROJECT_INCLUDE_DIR"],
+                        "libLDFMode": "deep",
+                    },
+                },
+            )
+            
+        # recuse through files
+        for c in childs:
+            c_path = os.path.join(parent, c)
+            recursive_util_build(c_path)
+
+import pdb
+lorawan_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "Third_Party", "LoRaWAN")
+pdb.set_trace()
+recursive_build_lora(lorawan_dir)
+
+#
 # Target: Build HAL Library
 #
 
