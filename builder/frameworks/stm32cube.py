@@ -356,7 +356,7 @@ for usb_lib in ("STM32_USB_Device_Library", "STM32_USB_Host_Library"):
 #
 
 def recursive_build_lora(parent):
-    """Recursively build LoRa Middlewhere
+    """Recursively build LoRa Middleware
    
     Recursively checks each folder for presence of .h/.c to indicate a library.
     The library is then added to the build tools. 
@@ -386,11 +386,9 @@ def recursive_build_lora(parent):
         # recuse through files
         for c in childs:
             c_path = os.path.join(parent, c)
-            recursive_util_build(c_path)
+            recursive_build_lora(c_path)
 
-import pdb
 lorawan_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "Third_Party", "LoRaWAN")
-pdb.set_trace()
 recursive_build_lora(lorawan_dir)
 
 #
