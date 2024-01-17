@@ -306,42 +306,56 @@ if os.path.isdir(os.path.join(bsp_dir, "Adafruit_Shield")):
 # Process Utilities
 #
 
-def recursive_util_build(parent):
-    """Recursively build utility libraries
-    
-    A utility library is defined as a folder containing at least one .h or .c
-    file. The library is then made available to the build tools.
-    
-    Args
-    ----
-    root: Fullpath of directory to search
-    """
+def build_utility(util : str, deps : list = None):
+    """Builds a cube utility
    
-    # check if root path is a directory 
-    if os.path.isdir(parent):
-        # get all children
-        childs = os.listdir(parent)
-        # build library if .h/.c files exist
-        if any(c.endswith((".c", ".h")) for c in childs):
-            build_custom_lib(
-                parent,
-                {
-                    "name": f"Util-{os.path.basename(parent)}",
-                    "dependencies": [{"name": "FrameworkVariantBSP"}],
-                    "build": {
-                        "flags": ["-I $PROJECT_SRC_DIR", "-I $PROJECT_INCLUDE_DIR"],
-                        "libLDFMode": "deep",
-                    },
-                },
-            )
-        # otherwise recuse through files
-        else:
-            for c in childs:
-                c_path = os.path.join(parent, c)
-                recursive_util_build(c_path)
+    Args
+    ---- 
+    util: Path to utility
+    deps: Optional list of dependencies
+    """
 
-utils_dir = os.path.join(FRAMEWORK_DIR, "Utilities")
-recursive_util_build(utils_dir)
+    # check if utilities folder is valid path
+    utils_dir = os.path.join(FRAMEWORK_DIR, "Utilities")
+    if os.path.isdir(utils_dir):
+        # get path to utility
+        util_dir = os.path.join(utils_dir, util)
+       
+        # turn filepath into reasonable name
+        util_suffix = util.replace(os.sep, "-")
+        
+        # create library manifest
+        manifest = {
+            "name": f"Utilities-{util_suffix}",
+            "build": {
+                "srcDir": ".",
+                "includeDir": ".",
+                "srcFilter": ["+<*.c>", "-<*example*.c>", "-<*template*.c>"],
+                "flags": [
+                    f"-I {util_dir}"
+                ]
+            }
+        }
+       
+        # add dependencies if configured 
+        if deps:
+            manifest["dependencies"] = []
+            for dep in deps:
+                manifest["dependencies"].append({"name": dep})
+               
+        # add library to build 
+        build_custom_lib(util_dir, manifest)
+
+
+# From STM32CubeWL/Utilities
+build_utility("Fonts")
+build_utility("conf")
+build_utility("lcd")
+build_utility(os.path.join("lpm", "tiny_lpm"))
+build_utility("misc")
+build_utility("sequencer")
+build_utility("timer")
+build_utility(os.path.join("trace", "adv_trace"))
 
 #
 # USB libraries from ST
@@ -355,41 +369,40 @@ for usb_lib in ("STM32_USB_Device_Library", "STM32_USB_Host_Library"):
 # LoRaWAN Middleware
 #
 
-def recursive_build_lora(parent):
-    """Recursively build LoRa Middleware
-   
-    Recursively checks each folder for presence of .h/.c to indicate a library.
-    The library is then added to the build tools. 
-    
-    Args
-    ----
-    root: Fullpath of directory to search
-    """
-   
-    # check if root path is a directory 
-    if os.path.isdir(parent):
-        # get all children
-        childs = os.listdir(parent)
-        # build library if .h/.c files exist
-        if any(c.endswith((".c", ".h")) for c in childs):
-            build_custom_lib(
-                parent,
-                {
-                    "name": f"LoRa-{os.path.basename(parent)}",
-                    "build": {
-                        "flags": ["-I $PROJECT_SRC_DIR", "-I $PROJECT_INCLUDE_DIR"],
-                        "libLDFMode": "deep",
-                    },
-                },
-            )
-            
-        # recuse through files
-        for c in childs:
-            c_path = os.path.join(parent, c)
-            recursive_build_lora(c_path)
-
-lorawan_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "Third_Party", "LoRaWAN")
-recursive_build_lora(lorawan_dir)
+def build_lorawan_middleware():
+    lorawan_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "Third_Party", "LoRaWAN")
+    if os.path.isdir(lorawan_dir):
+        
+        manifest = {
+            "name": "Middleware-LoRaWAN",
+            "build": {
+                "dependencies": [
+                    {"name": "Utilities-timer"},
+                    {"name": "Utilities-misc"},
+                ],
+                "srcFilter": [
+                    "+<**/*.c>",
+                    "-<**/*template*.c>",
+                    "-<**/*example*.c>",
+                    # Following are required for OTA updates (FUOTA), current not being used
+                    "-<LmHandler/Packages/FragDecoder.c>",
+                    "-<LmHandler/Packages/LmhpFirmwareManagement.c>",
+                    "-<LmHandler/Packages/LmhpFragmentation.c>"
+                ],
+                "flags": [],
+            }
+        }
+        
+        subdirs = ["Conf", "Crypto", "LmHandler",
+                   os.path.join("LmHandler", "Packages"), "Mac",
+                   os.path.join("Mac", "Region"), "Utilities"]
+        
+        for d in subdirs:
+            manifest["build"]["flags"].append(f"-I {d}")
+        
+        build_custom_lib(lorawan_dir, manifest)
+         
+build_lorawan_middleware()
 
 #
 # Build Middleware/Third_Party/SubGHz_Phy
@@ -403,6 +416,8 @@ if os.path.isdir(subghz_phy_dir):
         {
             "name": "Middleware-SubGHz_Phy",
             "build": {
+                "srcDir": ".",
+                "includeDir": ".",
                 "srcFilter": ["+<*.c>", "+<stm32_radio_driver/*.c"],
                 "flags": [
                     "-I $PROJECT_SRC_DIR",
