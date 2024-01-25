@@ -379,6 +379,7 @@ def build_lorawan_middleware():
                 "dependencies": [
                     {"name": "Utilities-timer"},
                     {"name": "Utilities-misc"},
+                    {"name": "Middleware-SubGHz_Phy"}
                 ],
                 "srcFilter": [
                     "+<**/*.c>",
@@ -418,7 +419,7 @@ if os.path.isdir(subghz_phy_dir):
             "build": {
                 "srcDir": ".",
                 "includeDir": ".",
-                "srcFilter": ["+<*.c>", "+<stm32_radio_driver/*.c"],
+                "srcFilter": ["+<*.c>", "+<stm32_radio_driver/*.c>"],
                 "flags": [
                     "-I $PROJECT_SRC_DIR",
                     "-I $PROJECT_INCLUDE_DIR",
