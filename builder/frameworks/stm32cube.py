@@ -375,12 +375,12 @@ def build_lorawan_middleware():
         
         manifest = {
             "name": "Middleware-LoRaWAN",
+            "dependencies": [
+                {"name": "Utilities-timer"},
+                {"name": "Utilities-misc"},
+                {"name": "Middleware-SubGHz_Phy"}
+            ],
             "build": {
-                "dependencies": [
-                    {"name": "Utilities-timer"},
-                    {"name": "Utilities-misc"},
-                    {"name": "Middleware-SubGHz_Phy"}
-                ],
                 "srcFilter": [
                     "+<**/*.c>",
                     "-<**/*template*.c>",
@@ -416,6 +416,11 @@ if os.path.isdir(subghz_phy_dir):
         subghz_phy_dir,
         {
             "name": "Middleware-SubGHz_Phy",
+            "dependencies": [
+                {"name": "Utilities-misc"},
+                {"name": "Utilities-trace-adv_trace"},
+                {"name": "Utilities-timer"}
+            ],
             "build": {
                 "srcDir": ".",
                 "includeDir": ".",
