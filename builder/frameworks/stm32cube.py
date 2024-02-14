@@ -325,6 +325,7 @@ def build_utility(util : str, deps : list = None):
         util_suffix = util.replace(os.sep, "-")
         
         # create library manifest
+        
         manifest = {
             "name": f"Utilities-{util_suffix}",
             "build": {
@@ -332,11 +333,10 @@ def build_utility(util : str, deps : list = None):
                 "includeDir": ".",
                 "srcFilter": ["+<*.c>", "-<*example*.c>", "-<*template*.c>"],
                 "flags": [
-                    f"-I {util_dir}"
+                    f'-I "{util_dir}"'
                 ]
             }
         }
-       
         # add dependencies if configured 
         if deps:
             manifest["dependencies"] = []
@@ -399,7 +399,7 @@ def build_lorawan_middleware():
                    os.path.join("Mac", "Region"), "Utilities"]
         
         for d in subdirs:
-            manifest["build"]["flags"].append(f"-I {d}")
+            manifest["build"]["flags"].append(f'-I "{d}"')
         
         build_custom_lib(lorawan_dir, manifest)
          
@@ -408,6 +408,7 @@ build_lorawan_middleware()
 #
 # Build Middleware/Third_Party/SubGHz_Phy
 #
+
 subghz_phy_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "Third_Party", "SubGHz_Phy")
 stm32_radio_driver_dir = os.path.join(subghz_phy_dir, "stm32_radio_driver")
 # check if path exists
@@ -428,8 +429,8 @@ if os.path.isdir(subghz_phy_dir):
                 "flags": [
                     "-I $PROJECT_SRC_DIR",
                     "-I $PROJECT_INCLUDE_DIR",
-                    f"-I {subghz_phy_dir}",
-                    f"-I {stm32_radio_driver_dir}"
+                    f'-I "{subghz_phy_dir}"',
+                    f'-I "{stm32_radio_driver_dir}"'
                     ],
                 "libLDFMode": "deep",
             },
