@@ -1,44 +1,44 @@
 {
     "build": {
-      "core": "stm32",
-      "cpu": "cortex-m4",
-      "extra_flags": "-DSTM32WLxx -DSTM32WLE5xx",
-      "f_cpu": "48000000L",
-      "framework_extra_flags": {
-        "arduino": "-DUSE_CM4_STARTUP_FILE"
-      },
-      "mcu": "stm32wl55jc",
-      "product_line": "STM32WL55xx",
-      "variant": "STM32WLxx/WL54JCI_WL55JCI_WLE4J(8-B-C)I_WLE5J(8-B-C)I"
+        "core": "stm32",
+        "cpu": "cortex-m4",
+        "extra_flags": "-DSTM32WLxx -DSTM32WLE5xx",
+        "f_cpu": "48000000L",
+        "framework_extra_flags": {
+            "arduino": "-DUSE_CM4_STARTUP_FILE"
+        },
+        "mcu": "stm32wle5jc",
+        "product_line": "STM32WLE5xx",
+        "variant": "STM32WLxx/WL54JCI_WL55JCI_WLE4J(8-B-C)I_WLE5J(8-B-C)I"
     },
     "debug": {
-      "default_tools": [
-        "stlink",
-        "blackmagic"
-      ],
-      "jlink_device": "STM32WL55JC",
-      "onboard_tools": [
-        "stlink"
-      ],
-      "openocd_target": "stm32wlx",
-      "svd_path": "STM32WL5x_CM4.svd"
+        "default_tools": [
+            "stlink",
+            "blackmagic"
+        ],
+        "jlink_device": "STM32WLE5JC",
+        "onboard_tools": [
+            "stlink"
+        ],
+        "openocd_target": "stm32wlx",
+        "svd_path": "STM32WLE5_CM4.svd"
     },
     "frameworks": [
-      "stm32cube"
+        "stm32cube"
     ],
     "name": "WioE5",
     "upload": {
-      "maximum_ram_size": 65536,
-      "maximum_size": 262144,
-      "protocol": "stlink",
-      "protocols": [
-        "jlink",
-        "cmsis-dap",
-        "stlink",
-        "mbed",
-        "blackmagic"
-      ]
+        "maximum_ram_size": 65536,
+        "maximum_size": 262144,
+        "protocol": "stlink",
+        "protocols": [
+            "jlink",
+            "cmsis-dap",
+            "stlink",
+            "mbed",
+            "blackmagic"
+        ]
     },
     "url": "https://wiki.seeedstudio.com/LoRa-E5_STM32WLE5JC_Module",
     "vendor": "seeedstudio"
-  }
+}
